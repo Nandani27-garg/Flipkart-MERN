@@ -2,13 +2,17 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const fileUpload = require('express-fileupload');
+const path = require('path');
 const errorMiddleware = require('./middlewares/error');
 
 const app = express();
 
 // config
-if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config({ path: 'backend/config/config.env' });
+if (process.env.NODE_ENV !== 'production' || !process.env.MONGO_URI) {
+    const env = require('dotenv').config({ path: path.join(__dirname, 'config', 'config.env') });
+    if (env && env.parsed && env.parsed.MONGO_URI) {
+        process.env.MONGO_URI = env.parsed.MONGO_URI;
+    }
 }
 
 app.use(express.json());
