@@ -87,13 +87,7 @@ Full-Stack Flipkart with Admin Dashboard & Paytm Payment Gateway.
   </tr>
 </table>
 
-<h2>📬 Contact</h2>
 
-Feel free to reach me through the below handles if you'd like to contact me.
-
-[![linkedin](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/jigar-sablee)
-[![instagram](https://img.shields.io/badge/Instagram-E4405F?style=for-the-badge&logo=instagram&logoColor=white)](https://www.instagram.com/jigarsable.dev)
-=======
 # Flipkart-MERN
 A modern, feature-rich full-stack e-commerce application built with [Tech Stack, e.g., Next.js, Node.js, MongoDB, and Stripe]. Features dynamic product management, user authentication, interactive shopping cart, order processing, and a secure payment gateway integration.
 >>>>>>> cad0f4905c8cc7c8218ad5422e10e4f3a765480e
