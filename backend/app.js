@@ -8,11 +8,15 @@ const errorMiddleware = require('./middlewares/error');
 const app = express();
 
 // config
-if (process.env.NODE_ENV !== 'production' || !process.env.MONGO_URI) {
+if (process.env.NODE_ENV !== 'production') {
     const env = require('dotenv').config({ path: path.join(__dirname, 'config', 'config.env') });
     if (env && env.parsed && env.parsed.MONGO_URI) {
         process.env.MONGO_URI = env.parsed.MONGO_URI;
     }
+}
+
+if (!process.env.MONGO_URI) {
+    console.warn('MONGO_URI is not defined. Set it in your deployment environment before starting the app.');
 }
 
 app.use(express.json());
