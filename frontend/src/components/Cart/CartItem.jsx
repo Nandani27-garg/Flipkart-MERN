@@ -39,7 +39,7 @@ const CartItem = ({ product, name, seller, price, cuttedPrice, image, stock, qua
     return (
         <div className="flex flex-col gap-3 py-5 pl-2 sm:pl-6 border-b overflow-hidden" key={product}>
 
-            <Link to={`/product/${product}`} className="flex flex-col sm:flex-row gap-5 items-stretch w-full group">
+            <Link onClick={(e) => e.stopPropagation()} to={`/product/${product}`} className="flex flex-col sm:flex-row gap-5 items-stretch w-full group">
                 {/* <!-- product image --> */}
                 <div className="w-full sm:w-1/6 h-28 flex-shrink-0">
                     <img draggable="false" className="h-full w-full object-contain" src={image} alt={name} />
@@ -87,7 +87,7 @@ const CartItem = ({ product, name, seller, price, cuttedPrice, image, stock, qua
                 {inCart && (
                     <>
                     <button onClick={() => saveForLaterHandler(product)} className="sm:ml-4 font-medium hover:text-primary-blue">SAVE FOR LATER</button>
-                    <button onClick={() => removeCartItem(product)} className="font-medium hover:text-red-600">REMOVE</button>
+                    <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); removeCartItem(product); }} className="font-medium hover:text-red-600">REMOVE</button>
                     </>
                 )}
             </div>
