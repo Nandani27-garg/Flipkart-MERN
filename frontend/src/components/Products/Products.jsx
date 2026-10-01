@@ -29,7 +29,8 @@ const Products = () => {
 
     const [price, setPrice] = useState([0, 200000]);
     const [category, setCategory] = useState(location.search ? location.search.split("=")[1] : "");
-    const [ratings, setRatings] = useState(0);\n    const [sort, setSort] = useState("newest");
+    const [ratings, setRatings] = useState(0);
+    const [sort, setSort] = useState("newest");
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +49,8 @@ const Products = () => {
     const clearFilters = () => {
         setPrice([0, 200000]);
         setCategory("");
-        setRatings(0);\n        setSort("newest");
+        setRatings(0);
+        setSort("newest");
     }
 
     useEffect(() => {
