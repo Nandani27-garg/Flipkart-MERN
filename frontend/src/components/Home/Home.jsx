@@ -9,32 +9,33 @@ import { useSnackbar } from 'notistack';
 import MetaData from '../Layouts/MetaData';
 
 const Home = () => {
-
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
-
   const { error, loading } = useSelector((state) => state.products);
 
   useEffect(() => {
+    dispatch(getSliderProducts());
+  }, [dispatch]);
+
+  useEffect(() => {
     if (error) {
-      enqueueSnackbar(error, { variant: "error" });
+      enqueueSnackbar(error, { variant: 'error' });
       dispatch(clearErrors());
     }
-    dispatch(getSliderProducts());
-  }, [dispatch, error, enqueueSnackbar]);
+  }, [error, dispatch, enqueueSnackbar]);
 
   return (
     <>
-      <MetaData title="Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More. Best Offers!" />
+      <MetaData title="Online Shopping Site for Mobiles, Electronics, Furniture, Grocery, Lifestyle, Books & More | Flipkart" />
       <Categories />
-      <main className="flex flex-col gap-3 px-2 mt-16 sm:mt-2">
+      <main className="mx-auto mt-16 flex w-full max-w-[1600px] flex-col gap-3 px-2 sm:mt-2 sm:px-3">
         <Banner />
-        <DealSlider title={"Discounts for You"} />
-        {!loading && <ProductSlider title={"Suggested for You"} tagline={"Based on Your Activity"} />}
-        <DealSlider title={"Top Brands, Best Price"} />
-        {!loading && <ProductSlider title={"You May Also Like..."} tagline={"Based on Your Interest"} />}
-        <DealSlider title={"Top Offers On"} />
-        {!loading && <ProductSlider title={"Don't Miss These!"} tagline={"Inspired by your order"} />}
+        <DealSlider title="Deals of the Day" />
+        {!loading && <ProductSlider title="Suggested for You" tagline="Handpicked for your next purchase" />}
+        <DealSlider title="Top Brands, Best Price" />
+        {!loading && <ProductSlider title="Trending Offers" tagline="Popular picks across categories" />}
+        <DealSlider title="Top Offers On" />
+        {!loading && <ProductSlider title="You May Also Like" tagline="More products worth exploring" />}
       </main>
     </>
   );
