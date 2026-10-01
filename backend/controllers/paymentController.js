@@ -30,7 +30,25 @@ exports.processPayment = asyncErrorHandler(async (req, res, next) => {
 
     const { amount, email, phoneNo } = req.body;
 
-    var params = {};
+    if (!amount || !email || !phoneNo) {
+        return next(new ErrorHandler("Amount, email and phone number are required", 400));
+    }
+
+    const requiredEnv = [
+        "PAYTM_MID",
+        "PAYTM_WEBSITE",
+        "PAYTM_CHANNEL_ID",
+        "PAYTM_INDUSTRY_TYPE",
+        "PAYTM_CUST_ID",
+        "PAYTM_MERCHANT_KEY"
+    ];
+
+    const missing = requiredEnv.filter((key) => !process.env[key]);
+    if (missing.length) {
+        return next(new ErrorHandler("Online payment is not configured. Please use Cash on Delivery.", 503));
+    }
+
+    const params = {};
 
     /* initialize an array */
     params["MID"] = process.env.PAYTM_MID;
@@ -45,7 +63,7 @@ exports.processPayment = asyncErrorHandler(async (req, res, next) => {
     params["EMAIL"] = email;
     params["MOBILE_NO"] = phoneNo;
 
-    let paytmChecksum = paytm.generateSignature(params, process.env.PAYTM_MERCHANT_KEY);
+    const paytmChecksum = paytm.generateSignature(params, process.env.PAYTM_MERCHANT_KEY);
     paytmChecksum.then(function (checksum) {
 
         let paytmParams = {
@@ -58,7 +76,7 @@ exports.processPayment = asyncErrorHandler(async (req, res, next) => {
         });
 
     }).catch(function (error) {
-        console.log(error);
+        return next(new ErrorHandler("Unable to initialize online payment", 502));
     });
 });
 
