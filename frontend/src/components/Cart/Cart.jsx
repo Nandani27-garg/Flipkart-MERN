@@ -36,7 +36,7 @@ const Cart = () => {
                             )}
 
                             {cartItems && cartItems.map((item) => (
-                                <CartItem {...item} inCart={true} />
+                                <CartItem {...item} inCart={true} key={item.product} />
                             )
                             )}
 
@@ -53,7 +53,7 @@ const Cart = () => {
                         <div className="flex flex-col mt-5 shadow bg-white">
                             <span className="font-medium text-lg px-2 sm:px-8 py-4 border-b">Saved For Later ({saveForLaterItems.length})</span>
                             {saveForLaterItems && saveForLaterItems.map((item) => (
-                                <SaveForLaterItem {...item} />
+                                <SaveForLaterItem {...item} key={item.product} />
                             )
                             )}
                         </div>
