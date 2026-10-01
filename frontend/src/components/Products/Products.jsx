@@ -17,7 +17,6 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import StarIcon from '@mui/icons-material/Star';
 import { categories } from '../../utils/constants';
 import MetaData from '../Layouts/MetaData';
-import { getRandomProducts } from '../../utils/functions';
 import { useLocation } from 'react-router-dom';
 
 const Products = () => {
@@ -28,7 +27,7 @@ const Products = () => {
     const location = useLocation();
 
     const [price, setPrice] = useState([0, 200000]);
-    const [category, setCategory] = useState(location.search ? location.search.split("=")[1] : "");
+    const [category, setCategory] = useState(() => new URLSearchParams(location.search).get("category") || "");
     const [ratings, setRatings] = useState(0);
     const [sort, setSort] = useState("newest");
 
@@ -40,7 +39,7 @@ const Products = () => {
     const [ratingsToggle, setRatingsToggle] = useState(true);
 
     const { products, loading, error, productsCount, resultPerPage, filteredProductsCount } = useSelector((state) => state.products);
-    const keyword = params.keyword;
+    const keyword = params.keyword || "";
 
     const priceHandler = (e, newPrice) => {
         setPrice(newPrice);
