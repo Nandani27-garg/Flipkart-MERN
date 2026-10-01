@@ -54,7 +54,7 @@ function App() {
         families: ["Roboto:300,400,500,600,700"]
       },
     });
-  });
+  }, []);
 
   useEffect(() => {
     dispatch(loadUser());
