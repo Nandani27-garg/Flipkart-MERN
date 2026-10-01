@@ -29,7 +29,7 @@ const Products = () => {
 
     const [price, setPrice] = useState([0, 200000]);
     const [category, setCategory] = useState(location.search ? location.search.split("=")[1] : "");
-    const [ratings, setRatings] = useState(0);
+    const [ratings, setRatings] = useState(0);\n    const [sort, setSort] = useState("newest");
 
     // pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -48,7 +48,7 @@ const Products = () => {
     const clearFilters = () => {
         setPrice([0, 200000]);
         setCategory("");
-        setRatings(0);
+        setRatings(0);\n        setSort("newest");
     }
 
     useEffect(() => {
@@ -56,8 +56,8 @@ const Products = () => {
             enqueueSnackbar(error, { variant: "error" });
             dispatch(clearErrors());
         }
-        dispatch(getProducts(keyword, category, price, ratings, currentPage));
-    }, [dispatch, keyword, category, price, ratings, currentPage, error, enqueueSnackbar]);
+        dispatch(getProducts(keyword, category, price, ratings, currentPage, sort));
+    }, [dispatch, keyword, category, price, ratings, currentPage, sort, error, enqueueSnackbar]);
 
     return (
         <>
@@ -187,6 +187,20 @@ const Products = () => {
 
                         {loading ? <Loader /> : (
                             <div className="flex flex-col gap-2 pb-4 justify-center items-center w-full overflow-hidden bg-white">
+
+                                <div className="w-full flex items-center justify-between px-4 py-3 border-b">
+                                    <span className="text-sm text-gray-600">{filteredProductsCount || 0} products found</span>
+                                    <select
+                                        value={sort}
+                                        onChange={(e) => { setSort(e.target.value); setCurrentPage(1); }}
+                                        className="border rounded-sm px-3 py-2 text-sm outline-none"
+                                    >
+                                        <option value="newest">Sort: Newest</option>
+                                        <option value="price-asc">Price: Low to High</option>
+                                        <option value="price-desc">Price: High to Low</option>
+                                        <option value="rating">Customer Rating</option>
+                                    </select>
+                                </div>
 
                                 <div className="grid grid-cols-1 sm:grid-cols-4 w-full place-content-start overflow-hidden pb-4 border-b">
                                     {products?.map((product) => (
