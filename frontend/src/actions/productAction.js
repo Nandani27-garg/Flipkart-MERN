@@ -35,13 +35,13 @@ import {
 
 // Get All Products --- Filter/Search/Sort
 export const getProducts =
-    (keyword = "", category, price = [0, 200000], ratings = 0, currentPage = 1) => async (dispatch) => {
+    (keyword = "", category, price = [0, 200000], ratings = 0, currentPage = 1, sort = "newest") => async (dispatch) => {
         try {
             dispatch({ type: ALL_PRODUCTS_REQUEST });
 
-            let url = `/api/v1/products?keyword=${keyword}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&page=${currentPage}`;
+            let url = `/api/v1/products?keyword=${encodeURIComponent(keyword)}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&page=${currentPage}&sort=${sort}`;
             if (category) {
-                url = `/api/v1/products?keyword=${keyword}&category=${category}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&page=${currentPage}`;
+                url = `/api/v1/products?keyword=${encodeURIComponent(keyword)}&category=${encodeURIComponent(category)}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}&page=${currentPage}&sort=${sort}`;
             }
             const { data } = await axios.get(url);
 
@@ -52,7 +52,7 @@ export const getProducts =
         } catch (error) {
             dispatch({
                 type: ALL_PRODUCTS_FAIL,
-                payload: error.response.data.message,
+                payload: error.response?.data?.message || error.message,
             });
         }
     };
