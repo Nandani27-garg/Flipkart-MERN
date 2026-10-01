@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import PriceSidebar from './PriceSidebar';
 import Stepper from './Stepper';
 // import {
@@ -10,7 +11,8 @@ import Stepper from './Stepper';
 //     useStripe,
 //     useElements,
 // } from '@stripe/react-stripe-js';
-import { clearErrors } from '../../actions/orderAction';
+import { clearErrors, newOrder } from '../../actions/orderAction';
+import { emptyCart } from '../../actions/cartAction';
 import { useSnackbar } from 'notistack';
 import { post } from '../../utils/paytmForm';
 import FormControl from '@mui/material/FormControl';
@@ -22,13 +24,14 @@ import MetaData from '../Layouts/MetaData';
 const Payment = () => {
 
     const dispatch = useDispatch();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
     // const stripe = useStripe();
     // const elements = useElements();
     // const paymentBtn = useRef(null);
 
     const [payDisable, setPayDisable] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('cod');
 
     const { shippingInfo, cartItems } = useSelector((state) => state.cart);
     const { user } = useSelector((state) => state.user);
@@ -50,76 +53,42 @@ const Payment = () => {
 
     const submitHandler = async (e) => {
         e.preventDefault();
-
-        // paymentBtn.current.disabled = true;
         setPayDisable(true);
 
-        try {
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        if (paymentMethod === 'cod') {
+            const order = {
+                shippingInfo,
+                orderItems: cartItems,
+                totalPrice,
+                paymentInfo: {
+                    id: `COD-${Date.now()}`,
+                    status: 'COD'
+                }
             };
 
-            const { data } = await axios.post(
-                '/api/v1/payment/process',
-                paymentData,
-                config,
-            );
+            dispatch(newOrder(order));
+            dispatch(emptyCart());
+            navigate('/orders/success');
+            return;
+        }
 
-            let info = {
-                action: "https://securegw-stage.paytm.in/order/process",
-                params: data.paytmParams
+        try {
+            const config = { headers: { "Content-Type": "application/json" } };
+            const { data } = await axios.post('/api/v1/payment/process', paymentData, config);
+
+            if (!data?.paytmParams) {
+                throw new Error('Online payment is not configured. Please use Cash on Delivery.');
             }
 
-            post(info)
-
-            // if (!stripe || !elements) return;
-
-            // const result = await stripe.confirmCardPayment(client_secret, {
-            //     payment_method: {
-            //         card: elements.getElement(CardNumberElement),
-            //         billing_details: {
-            //             name: user.name,
-            //             email: user.email,
-            //             address: {
-            //                 line1: shippingInfo.address,
-            //                 city: shippingInfo.city,
-            //                 country: shippingInfo.country,
-            //                 state: shippingInfo.state,
-            //                 postal_code: shippingInfo.pincode,
-            //             },
-            //         },
-            //     },
-            // });
-
-            // if (result.error) {
-            //     paymentBtn.current.disabled = false;
-            //     enqueueSnackbar(result.error.message, { variant: "error" });
-            // } else {
-            //     if (result.paymentIntent.status === "succeeded") {
-
-            //         order.paymentInfo = {
-            //             id: result.paymentIntent.id,
-            //             status: result.paymentIntent.status,
-            //         };
-
-            //         dispatch(newOrder(order));
-            //         dispatch(emptyCart());
-
-            //         navigate("/order/success");
-            //     } else {
-            //         enqueueSnackbar("Processing Payment Failed!", { variant: "error" });
-            //     }
-            // }
-
+            post({
+                action: "https://securegw-stage.paytm.in/order/process",
+                params: data.paytmParams
+            });
         } catch (error) {
-            // paymentBtn.current.disabled = false;
             setPayDisable(false);
-            enqueueSnackbar(error, { variant: "error" });
+            enqueueSnackbar(error.response?.data?.message || error.message, { variant: "error" });
         }
     };
-
     useEffect(() => {
         if (error) {
             dispatch(clearErrors());
@@ -147,19 +116,12 @@ const Payment = () => {
                                     <FormControl>
                                         <RadioGroup
                                             aria-labelledby="payment-radio-group"
-                                            defaultValue="paytm"
+                                            value={paymentMethod}
+                                            onChange={(e) => setPaymentMethod(e.target.value)}
                                             name="payment-radio-button"
                                         >
-                                            <FormControlLabel
-                                                value="paytm"
-                                                control={<Radio />}
-                                                label={
-                                                    <div className="flex items-center gap-4">
-                                                        <img draggable="false" className="h-6 w-6 object-contain" src="https://rukminim1.flixcart.com/www/96/96/promos/01/09/2020/a07396d4-0543-4b19-8406-b9fcbf5fd735.png" alt="Paytm Logo" />
-                                                        <span>Paytm</span>
-                                                    </div>
-                                                }
-                                            />
+                                            <FormControlLabel value="cod" control={<Radio />} label="Cash on Delivery" />
+                                            <FormControlLabel value="paytm" control={<Radio />} label="Paytm (online)" />
                                         </RadioGroup>
                                     </FormControl>
 
