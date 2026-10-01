@@ -62,7 +62,7 @@ export const getSimilarProducts = (category) => async (dispatch) => {
     try {
         dispatch({ type: ALL_PRODUCTS_REQUEST });
 
-        const { data } = await axios.get(`/api/v1/products?category=${category}`);
+        const { data } = await axios.get(`/api/v1/products?category=${encodeURIComponent(category || "")}`);
 
         dispatch({
             type: ALL_PRODUCTS_SUCCESS,
@@ -71,7 +71,7 @@ export const getSimilarProducts = (category) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: ALL_PRODUCTS_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 };
@@ -90,7 +90,7 @@ export const getProductDetails = (id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: PRODUCT_DETAILS_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 };
@@ -109,7 +109,7 @@ export const newReview = (reviewData) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: NEW_REVIEW_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
@@ -128,7 +128,7 @@ export const getSliderProducts = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: SLIDER_PRODUCTS_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 };
@@ -147,7 +147,7 @@ export const getAdminProducts = () => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: ADMIN_PRODUCTS_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 };
@@ -166,7 +166,7 @@ export const createProduct = (productData) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: NEW_PRODUCT_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
@@ -185,7 +185,7 @@ export const updateProduct = (id, productData) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: UPDATE_PRODUCT_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
@@ -203,7 +203,7 @@ export const deleteProduct = (id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: DELETE_PRODUCT_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
@@ -221,7 +221,7 @@ export const getAllReviews = (id) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: ALL_REVIEWS_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
@@ -239,7 +239,7 @@ export const deleteReview = (reviewId, productId) => async (dispatch) => {
     } catch (error) {
         dispatch({
             type: DELETE_REVIEW_FAIL,
-            payload: error.response.data.message,
+            payload: error.response?.data?.message || error.message,
         });
     }
 }
