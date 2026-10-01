@@ -10,68 +10,56 @@ import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 const Header = () => {
-
   const { isAuthenticated, user } = useSelector((state) => state.user);
-
-  const { cartItems } = useSelector(state => state.cart);
-
+  const { cartItems = [] } = useSelector((state) => state.cart);
   const [togglePrimaryDropDown, setTogglePrimaryDropDown] = useState(false);
   const [toggleSecondaryDropDown, setToggleSecondaryDropDown] = useState(false);
 
   return (
+    <header className="fixed top-0 z-50 w-full bg-[#2874f0] shadow-md">
+      <div className="mx-auto flex min-h-[56px] w-full max-w-[1248px] items-center gap-3 px-3 py-2 sm:px-5 lg:gap-8">
+        <Link to="/" aria-label="Flipkart home" className="flex shrink-0 flex-col items-start justify-center">
+          <img draggable="false" className="h-[20px] w-[82px] object-contain" src={logo} alt="Flipkart" />
+          <span className="ml-1 mt-[-1px] text-[10px] italic leading-3 text-white">Explore <span className="font-semibold text-[#ffe500]">Plus ✦</span></span>
+        </Link>
 
-    <header className="bg-primary-blue fixed top-0 py-2.5 w-full z-10">
-
-      {/* <!-- navbar container --> */}
-      <div className="w-full sm:w-9/12 px-1 sm:px-4 m-auto flex justify-between items-center relative">
-
-        {/* <!-- logo & search container --> */}
-        <div className="flex items-center flex-1">
-          <Link className="h-7 mr-1 sm:mr-4" to="/">
-            <img draggable="false" className="h-full w-full object-contain" src={logo} alt="Flipkart Logo" />
-          </Link>
-
+        <div className="min-w-0 flex-1">
           <Searchbar />
         </div>
-        {/* <!-- logo & search container --> */}
 
-        {/* <!-- right navs --> */}
-        <div className="flex items-center justify-between ml-1 sm:ml-0 gap-0.5 sm:gap-7 relative">
+        <nav className="flex shrink-0 items-center gap-3 text-sm font-medium text-white sm:gap-6">
+          {isAuthenticated === false ? (
+            <Link to="/login" className="rounded-sm bg-white px-5 py-1.5 font-semibold text-[#2874f0] shadow-sm transition hover:bg-gray-100 sm:px-8">Login</Link>
+          ) : (
+            <div className="relative">
+              <button type="button" aria-expanded={togglePrimaryDropDown} onClick={() => setTogglePrimaryDropDown(!togglePrimaryDropDown)} className="flex max-w-[110px] items-center gap-1 whitespace-nowrap hover:text-blue-100">
+                <span className="max-w-[82px] truncate">{user?.name?.split(" ")[0] || "Account"}</span>
+                {togglePrimaryDropDown ? <ExpandLessIcon sx={{ fontSize: 18 }} /> : <ExpandMoreIcon sx={{ fontSize: 18 }} />}
+              </button>
+              {togglePrimaryDropDown && <PrimaryDropDownMenu setTogglePrimaryDropDown={setTogglePrimaryDropDown} user={user} />}
+            </div>
+          )}
 
-          {isAuthenticated === false ?
-            <Link to="/login" className="px-3 sm:px-9 py-0.5 text-primary-blue bg-white border font-medium rounded-sm cursor-pointer">Login</Link>
-            :
-            (
-              <span className="userDropDown flex items-center text-white font-medium gap-1 cursor-pointer" onClick={() => setTogglePrimaryDropDown(!togglePrimaryDropDown)}>{user.name && user.name.split(" ", 1)}
-                <span>{togglePrimaryDropDown ? <ExpandLessIcon sx={{ fontSize: "16px" }} /> : <ExpandMoreIcon sx={{ fontSize: "16px" }} />}</span>
-              </span>
-            )
-          }
+          <Link to="/login" className="hidden whitespace-nowrap transition hover:text-blue-100 lg:block">Become a Seller</Link>
 
-          {togglePrimaryDropDown && <PrimaryDropDownMenu setTogglePrimaryDropDown={setTogglePrimaryDropDown} user={user} />}
+          <div className="relative hidden sm:block">
+            <button type="button" aria-expanded={toggleSecondaryDropDown} onClick={() => setToggleSecondaryDropDown(!toggleSecondaryDropDown)} className="flex items-center gap-1 whitespace-nowrap hover:text-blue-100">
+              More {toggleSecondaryDropDown ? <ExpandLessIcon sx={{ fontSize: 18 }} /> : <ExpandMoreIcon sx={{ fontSize: 18 }} />}
+            </button>
+            {toggleSecondaryDropDown && <SecondaryDropDownMenu />}
+          </div>
 
-          <span className="moreDropDown hidden sm:flex items-center text-white font-medium gap-1 cursor-pointer" onClick={() => setToggleSecondaryDropDown(!toggleSecondaryDropDown)}>More
-            <span>{toggleSecondaryDropDown ? <ExpandLessIcon sx={{ fontSize: "16px" }} /> : <ExpandMoreIcon sx={{ fontSize: "16px" }} />}</span>
-          </span>
-
-          {toggleSecondaryDropDown && <SecondaryDropDownMenu />}
-
-          <Link to="/cart" className="flex items-center text-white font-medium gap-2 relative">
-            <span><ShoppingCartIcon /></span>
-            {cartItems.length > 0 &&
-              <div className="w-5 h-5 p-2 bg-red-500 text-xs rounded-full absolute -top-2 left-3 flex justify-center items-center border">
-                {cartItems.length}
-              </div>
-            }
-            Cart
+          <Link to="/cart" aria-label={`Shopping cart, ${cartItems.length} items`} className="relative flex items-center gap-1.5 whitespace-nowrap transition hover:text-blue-100">
+            <span className="relative inline-flex">
+              <ShoppingCartIcon />
+              {cartItems.length > 0 && <span className="absolute -right-2 -top-2 flex h-[17px] min-w-[17px] items-center justify-center rounded-full border border-[#2874f0] bg-[#ff6161] px-1 text-[10px] text-white">{cartItems.length}</span>}
+            </span>
+            <span className="hidden sm:inline">Cart</span>
           </Link>
-        </div>
-        {/* <!-- right navs --> */}
-
+        </nav>
       </div>
-      {/* <!-- navbar container --> */}
     </header>
-  )
+  );
 };
 
 export default Header;
