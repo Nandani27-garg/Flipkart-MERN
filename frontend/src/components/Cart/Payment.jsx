@@ -66,9 +66,14 @@ const Payment = () => {
                 }
             };
 
-            dispatch(newOrder(order));
-            dispatch(emptyCart());
-            navigate('/orders/success');
+            try {
+                await dispatch(newOrder(order));
+                dispatch(emptyCart());
+                navigate('/orders/success');
+            } catch (error) {
+                setPayDisable(false);
+                enqueueSnackbar(error.message, { variant: "error" });
+            }
             return;
         }
 
